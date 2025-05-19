@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Karen's HOA Empire</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fdf5e6;
+      color: #2c3e50;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2em;
+    }
+    .panel {
+      display: inline-block;
+      padding: 20px;
+      margin: 10px;
+      border: 2px solid #2c3e50;
+      border-radius: 10px;
+      background: #fffefc;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #7f8c8d;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #95a5a6;
+    }
+    #stats {
+      font-weight: bold;
+    }
+  </style>
+<style>
+  #popup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffebc5;
+    color: #2c3e50;
+    padding: 10px 20px;
+    border: 2px solid #e67e22;
+    border-radius: 10px;
+    font-size: 16px;
+    display: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+  <h1>Karen's HOA Empire</h1>
+
+  <div class="panel">
+    <p>Violation Points: <span id="vp">0</span></p>
+    <button onclick="issueViolation()">📋 Issue Violation</button>
+  </div>
+
+  <div class="panel">
+    <h3>Upgrades</h3>
+    <button onclick="buyTrashCanViolation()">🗑️ Trash Can Patrol (10 VP)</button><br>
+    <button onclick="buyDogPoopPatrol()">🐾 Dog Poop Patrol (100 VP)</button><br>
+    <button onclick="buyWalkingClub()">🚶 Walking Club (1000 VP)</button>
+  </div>
+
+  <div class="panel" id="stats">
+    <p>Trash Can Units: <span id="trashUpgrades">0</span></p>
+    <p>Dog Patrols: <span id="dogUpgrades">0</span></p>
+    <p>Walking Club Members: <span id="walkUpgrades">0</span></p>
+    <p>VP/sec: <span id="vps">0</span></p>
+  </div>
+
+  <div class="panel">
+    <h3>🗣️ HOA Gossip Board</h3>
+    <div id="gossipLog" style="height: 100px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; background: #fff; font-size: 14px; text-align: left;"></div>
+  </div>
+
+  <div class="panel">
+    <h3>🏆 Neighborhood Leaderboard</h3>
+    <ul id="leaderboard" style="list-style: none; padding-left: 0; font-size: 14px;">
+      <li>Karen — 0 VP</li>
+      <li>Linda — 0 VP</li>
+      <li>Doug — 0 VP</li>
+    </ul>
+  </div>
+
+  <script>
+    let vp = 0;
+    let trashUpgrades = 0;
+    let dogUpgrades = 0;
+    let walkUpgrades = 0;
+
+    function issueViolation() {
+      vp++;
+      updateDisplay();
+    }
+
+    function buyTrashCanViolation() {
+      if (vp >= 10) {
+        vp -= 10;
+        trashUpgrades++;
+        updateDisplay();
+      }
+    }
+
+    function buyDogPoopPatrol() {
+      if (vp >= 100) {
+        vp -= 100;
+        dogUpgrades++;
+        updateDisplay();
+      }
+    }
+
+    function buyWalkingClub() {
+      if (vp >= 1000) {
+        vp -= 1000;
+        walkUpgrades++;
+        updateDisplay();
+      }
+    }
+
+    function calculateVPS() {
+      return trashUpgrades * 0.1 + dogUpgrades * 1 + walkUpgrades * 5;
+    }
+
+    function updateDisplay() {
+      updateGossip();
+      updateLeaderboard();
+      document.getElementById('vp').textContent = Math.floor(vp);
+      document.getElementById('trashUpgrades').textContent = trashUpgrades;
+      document.getElementById('dogUpgrades').textContent = dogUpgrades;
+      document.getElementById('walkUpgrades').textContent = walkUpgrades;
+      document.getElementById('vps').textContent = calculateVPS().toFixed(1);
+    }
+
+    setInterval(() => {
+      vp += calculateVPS();
+      updateDisplay();
+    }, 1000);
+  function updateGossip() {
+  const gossipMessages = [
+    "Karen saw a trampoline 2 inches too tall... citation incoming.",
+    "Linda tried to host a bake sale. No permit.",
+    "Doug parked facing the wrong way again.",
+    "Someone used a teal mailbox. HOA horror!"
+  ];
+  const gossipLog = document.getElementById("gossipLog");
+  if (Math.random() < 0.2) {
+    const msg = gossipMessages[Math.floor(Math.random() * gossipMessages.length)];
+    const p = document.createElement("p");
+    p.textContent = msg;
+    gossipLog.appendChild(p);
+    if (gossipLog.children.length > 5) {
+      gossipLog.removeChild(gossipLog.children[0]);
+    }
+  }
+}
+
+function updateLeaderboard() {
+  const leaderboard = document.getElementById("leaderboard");
+  leaderboard.innerHTML = `
+    <li>Karen — ${Math.floor(vp)} VP</li>
+    <li>Linda — ${Math.floor(vp * 0.72)} VP</li>
+    <li>Doug — ${Math.floor(vp * 0.53)} VP</li>
+  `;
+}
+</script>
+<div id="popup"></div>
+
+<script>
+function showPopup(message) {
+  const popup = document.getElementById("popup");
+  popup.textContent = message;
+  popup.style.display = "block";
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 3000);
+}
+
+setInterval(() => {
+  const triggers = [
+    "🚫 Linda placed a gnome without approval!",
+    "📦 A package sat on Doug's porch for too long!",
+    "🐶 Unleashed dog spotted on the sidewalk!",
+    "🎈 Unauthorized party balloons discovered!"
+  ];
+  if (Math.random() < 0.15) {
+    const message = triggers[Math.floor(Math.random() * triggers.length)];
+    showPopup(message);
+  }
+}, 5000);
+</script>
+</body>
+</html>
